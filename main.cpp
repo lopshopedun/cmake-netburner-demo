@@ -12,12 +12,18 @@
 #include <iostream>
 #include <functional>
 
+// define declared in CMakeLists.txt
+#ifdef PROJECT_NAME
+    #define APP_NAME PROJECT_NAME
+#else
+    #define APP_NAME "Unknown-project"
+#endif
+
 extern "C" {
 void UserMain(void * pd);
 }
 
-// defines declared in CMakeLists.txt
-const char * AppName = PROJECT_NAME PROJECT_VERSION;
+const char * AppName = APP_NAME;
 
 void UserMain(void * pd) {
     EnableOSStackProtector(); // TODO: Uncomment #define UCOS_STACKOVERFLOW in predef.h, rebuild libraries
@@ -25,7 +31,7 @@ void UserMain(void * pd) {
     GetDHCPAddressIfNecessary();
     OSChangePrio(MAIN_PRIO);
     EnableAutoUpdate();
-    StartHTTP();
+    // StartHTTP();
     EnableTaskMonitor();
 
     #ifndef _DEBUG
@@ -33,14 +39,14 @@ void UserMain(void * pd) {
     #endif
 
     #ifdef _DEBUG
-    InitializeNetworkGDB_and_Wait();
+       InitializeNetworkGDB_and_Wait();
     #endif
 
     sim2.scm.cwcr &= 0xFF7F; // Disable WatchDog
 
-    printf("Application started\n");
+    printf("Application %s started\n", AppName);
 
-    std::cout << "Hello from GCC" <<  __VERSION__ << "!\n"
+    std::cout << "Hello from GCC " <<  __VERSION__ << "!\n"
                  "Build " << __DATE__ << " " << __TIME__ << '\n';
 
     while (1) {
