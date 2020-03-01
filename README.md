@@ -10,8 +10,10 @@ At my job we develop some cross-platform CMake-based application that should run
 
 ```bash
 mkdir build && cd build
-cmake -Wdev -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE=./m68k-unknown-elf.cmake ..
-cmake --build . --config Release
+cmake -Wdev -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../m68k-unknown-elf.cmake ..
+# or
+cmake -Wdev -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=../m68k-unknown-elf.cmake ..
+cmake --build .
 ```
 
 ## Demonstration
