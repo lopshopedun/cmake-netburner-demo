@@ -1,6 +1,6 @@
 # cmake-netburner-hello-world
 
-Demo that demonstrates how to build the project for NetBurner MOD5441X using CMake.
+Demonstration of how to build the project for NetBurner MOD5441X using CMake.
 
 ## Motivation
 
@@ -18,3 +18,8 @@ cmake --build .
 
 ## Demonstration
 
+![How it works](/demo.gif)
+
+## Known Issues
+
+Under Win 7 x64 the steps `Detecting C/CXX compiler ABI info` always fail if Windows Cmd (or `cmake-gui` tool) is used.

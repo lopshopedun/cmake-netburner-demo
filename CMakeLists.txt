@@ -20,7 +20,7 @@ add_definitions(-DPROJECT_NAME="${CMAKE_PROJECT_NAME}_${PROJECT_VERSION}")
 set(OBJCOPY_OPTS --strip-all --output-target=srec)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(PROJECT_NAME DB${PROJECT_NAME}.elf)
+    set(PROJECT_NAME DB${PROJECT_NAME})
     set(OBJCOPY_OPTS --output-target=srec)
 endif()
 
@@ -49,7 +49,7 @@ target_link_libraries(${PROJECT_NAME}.elf
 )
 
 target_link_libraries(${PROJECT_NAME}.elf 
-    debug "-Wl,-Map=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROJECT_NAME}.map ${EXTRALINKFLAGS} -Wl,--gc-sections -Wl,--start-group,${DBNBLIBS} -lstdc++ ${EXTRALIBS} -Wl,--end-group"
+    debug "-Wl,-Map=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROJECT_NAME}.map ${EXTRALINKFLAGS} -Wl,--gc-sections -Wl,--start-group,${DBNBLIBS} -lstdc++ ${EXTRADBLIBS} -Wl,--end-group"
 )
 
 target_link_libraries(${PROJECT_NAME}.elf 

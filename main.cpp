@@ -31,7 +31,6 @@ void UserMain(void * pd) {
     GetDHCPAddressIfNecessary();
     OSChangePrio(MAIN_PRIO);
     EnableAutoUpdate();
-    // StartHTTP();
     EnableTaskMonitor();
 
     #ifndef _DEBUG
