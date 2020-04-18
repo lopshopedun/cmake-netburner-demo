@@ -1,11 +1,8 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.1)
 
 set(MAJ 0)
 set(MIN 0)
-set(PATCH 1)
-
-set(NBCOMPCODE compcode)
-set(COMPCODEFLAGS 0xC0040000 0xC2000000)
+set(PATCH 2)
 
 if ($ENV{NBROOT} STREQUAL "C:\\nburn")
     set(CMAKE_NBROOT "C:/nburn")
@@ -17,6 +14,8 @@ project(cmake-netburner-hello-world VERSION ${MAJ}.${MIN}.${PATCH})
 set(SOURCES ${PROJECT_SOURCE_DIR}/main.cpp)
 add_definitions(-DPROJECT_NAME="${CMAKE_PROJECT_NAME}_${PROJECT_VERSION}")
 
+set(PROJECT_NAME "${PROJECT_VERSION}_${PROJECT_NAME}")
+
 set(OBJCOPY_OPTS --strip-all --output-target=srec)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -25,12 +24,20 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 
 add_executable(${PROJECT_NAME}.elf ${SOURCES})
-add_custom_target(app ALL DEPENDS ${PROJECT_NAME}.elf)
+
+if(EXISTS "${PROJECT_SOURCE_DIR}/html" AND IS_DIRECTORY "${PROJECT_SOURCE_DIR}/html")
+    add_custom_target(htmldata ALL
+        COMMAND comphtml ${PROJECT_SOURCE_DIR}/html -o${PROJECT_SOURCE_DIR}/htmldata.cpp
+    )
+    target_sources(${PROJECT_NAME}.elf PRIVATE ${PROJECT_SOURCE_DIR}/htmldata.cpp)
+endif()
+
+add_custom_target(app ALL DEPENDS htmldata ${PROJECT_NAME}.elf)
 add_custom_command(
     TARGET app
     POST_BUILD
     COMMAND ${CMAKE_OBJCOPY} ${OBJCOPY_OPTS} ${PROJECT_NAME}.elf ${PROJECT_NAME}.s19
-    COMMAND ${NBCOMPCODE} ${PROJECT_NAME}.s19 ${PROJECT_NAME}_APP.s19 -M ${PROJECT_NAME}.map -R ${COMPCODEFLAGS} -P$ENV{PLATFORM}
+    COMMAND compcode ${PROJECT_NAME}.s19 ${PROJECT_NAME}_APP.s19 -M ${PROJECT_NAME}.map -R 0xC0040000 0xC2000000 -P$ENV{PLATFORM}
     WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     VERBATIM
 )

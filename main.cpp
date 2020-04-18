@@ -32,6 +32,7 @@ void UserMain(void * pd) {
     OSChangePrio(MAIN_PRIO);
     EnableAutoUpdate();
     EnableTaskMonitor();
+    StartHTTP();
 
     #ifndef _DEBUG
     EnableSmartTraps();
