@@ -2,11 +2,7 @@ cmake_minimum_required(VERSION 3.1)
 
 set(MAJ 0)
 set(MIN 0)
-set(PATCH 2)
-
-if ($ENV{NBROOT} STREQUAL "C:\\nburn")
-    set(CMAKE_NBROOT "C:/nburn")
-endif()
+set(PATCH 3)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE})
 project(cmake-netburner-hello-world VERSION ${MAJ}.${MIN}.${PATCH})
@@ -14,7 +10,11 @@ project(cmake-netburner-hello-world VERSION ${MAJ}.${MIN}.${PATCH})
 set(SOURCES ${PROJECT_SOURCE_DIR}/main.cpp)
 add_definitions(-DPROJECT_NAME="${CMAKE_PROJECT_NAME}_${PROJECT_VERSION}")
 
-set(PROJECT_NAME "${PROJECT_VERSION}_${PROJECT_NAME}")
+set(PROJECT_NAME "${CMAKE_PROJECT_NAME}_${PROJECT_VERSION}")
+
+if ($ENV{NBROOT} STREQUAL "C:\\nburn")
+    set(CMAKE_NBROOT "C:/nburn")
+endif()
 
 set(OBJCOPY_OPTS --strip-all --output-target=srec)
 
@@ -26,10 +26,17 @@ endif()
 add_executable(${PROJECT_NAME}.elf ${SOURCES})
 
 if(EXISTS "${PROJECT_SOURCE_DIR}/html" AND IS_DIRECTORY "${PROJECT_SOURCE_DIR}/html")
+    if( NOT EXISTS ${PROJECT_SOURCE_DIR}/htmldata.cpp )
+      MESSAGE( "-- Generating htmldata.cpp ***" )
+      execute_process(
+          COMMAND comphtml ${PROJECT_SOURCE_DIR}/html -o${PROJECT_SOURCE_DIR}/htmldata.cpp
+            )
+      MESSAGE( "-- Generating htmldata.cpp - done" )
+    endif()
     add_custom_target(htmldata ALL
         COMMAND comphtml ${PROJECT_SOURCE_DIR}/html -o${PROJECT_SOURCE_DIR}/htmldata.cpp
     )
-    target_sources(${PROJECT_NAME}.elf PRIVATE ${PROJECT_SOURCE_DIR}/htmldata.cpp)
+    target_sources(${PROJECT_NAME}.elf PRIVATE ${PROJECT_SOURCE_DIR}/htmldata.cpp ${PROJECT_SOURCE_DIR}/html/index.htm)
 endif()
 
 add_custom_target(app ALL DEPENDS htmldata ${PROJECT_NAME}.elf)
@@ -42,8 +49,8 @@ add_custom_command(
     VERBATIM
 )
 
-set(NBLIBS "${NBLIBS} ${CMAKE_NBROOT}/lib/$ENV{PLATFORM}.a ${CMAKE_NBROOT}/lib/NetBurner.a ${CMAKE_NBROOT}/lib/FatFile.a")
-set(DBNBLIBS "${CMAKE_NBROOT}/lib/DB$ENV{PLATFORM}.a ${CMAKE_NBROOT}/lib/DBNetBurner.a ${CMAKE_NBROOT}/lib/FatFile.a")
+set(NBLIBS "${NBLIBS} ${CMAKE_NBROOT}/lib/$ENV{PLATFORM}.a ${CMAKE_NBROOT}/lib/NetBurner.a ${CMAKE_NBROOT}/lib/FatFile.a ${CMAKE_NBROOT}/lib/StdFFile.a")
+set(DBNBLIBS "${CMAKE_NBROOT}/lib/DB$ENV{PLATFORM}.a ${CMAKE_NBROOT}/lib/DBNetBurner.a ${CMAKE_NBROOT}/lib/FatFile.a ${CMAKE_NBROOT}/lib/StdFFile.a")
 
 target_link_libraries(${PROJECT_NAME}.elf 
     optimized "-Wl,-Map=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROJECT_NAME}.map ${EXTRALINKFLAGS} -Wl,--gc-sections -Wl,--start-group,${NBLIBS} -lstdc++ ${EXTRALIBS} -Wl,--end-group"
@@ -53,6 +60,7 @@ target_link_libraries(${PROJECT_NAME}.elf
     optimized ${CMAKE_NBROOT}/lib/$ENV{PLATFORM}.a 
     optimized ${CMAKE_NBROOT}/lib/NetBurner.a 
     optimized ${CMAKE_NBROOT}/lib/FatFile.a
+    optimized ${CMAKE_NBROOT}/lib/StdFFile.a
 )
 
 target_link_libraries(${PROJECT_NAME}.elf 
@@ -63,4 +71,5 @@ target_link_libraries(${PROJECT_NAME}.elf
     debug ${CMAKE_NBROOT}/lib/DB$ENV{PLATFORM}.a 
     debug ${CMAKE_NBROOT}/lib/DBNetBurner.a 
     debug ${CMAKE_NBROOT}/lib/FatFile.a
+    debug ${CMAKE_NBROOT}/lib/StdFFile.a
 )

@@ -12,6 +12,7 @@ if ($ENV{PLATFORM} STREQUAL "MOD5441X")
     set(CPU_TYPE MCF5441X)
 endif()
 
+set(CMAKE_NBROOT "$ENV{NBROOT}")
 if ($ENV{NBROOT} STREQUAL "C:\\nburn")
     set(CMAKE_NBROOT "C:/nburn")
 endif()
