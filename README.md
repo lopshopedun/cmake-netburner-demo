@@ -14,6 +14,8 @@ mkdir build && cd build
 cmake -Wdev -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../m68k-unknown-elf.cmake ..
 # or
 cmake -Wdev -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=../m68k-unknown-elf.cmake ..
+make app
+# or
 cmake --build . --target app
 ```
 
