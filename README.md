@@ -11,13 +11,15 @@ At my job we develop some cross-platform CMake-based application that should run
 
 ```bash
 mkdir build && cd build
-cmake -Wdev -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../m68k-unknown-elf.cmake ..
+cmake -Wdev -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../cmake/m68k-unknown-elf.cmake ..
 # or
-cmake -Wdev -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=../m68k-unknown-elf.cmake ..
+cmake -Wdev -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=../cmake/m68k-unknown-elf.cmake ..
 make app
 # or
-cmake --build . --target app
+cmake --build . --target app -- VERBOSE=1
 ```
+
+Also you can build the project in `MinSizeRel` and `RelWithDebInfo` standard build configurations.
 
 ## Demonstration
 
