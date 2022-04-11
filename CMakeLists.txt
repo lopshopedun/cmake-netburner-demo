@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.1)
 
 set(MAJ 0)
 set(MIN 0)
-set(PATCH 5)
+set(PATCH 6)
 
 project(cmake-netburner-hello-world
 	VERSION ${MAJ}.${MIN}.${PATCH}

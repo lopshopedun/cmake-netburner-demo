@@ -27,10 +27,21 @@ set(C_NBINCLUDE
 	-I${CMAKE_NBROOT}/include \
 	-I${CMAKE_NBROOT}/$ENV{PLATFORM}/include"
 )
-set(CXX_NBINCLUDE
-	"${C_NBINCLUDE} \
-	-I${CMAKE_NBROOT}/gcc-m68k/m68k-unknown-elf/include/c++/5.2.0"
-)
+
+set(GCC_5_2_0_DIR ${CMAKE_NBROOT}/gcc-m68k/m68k-unknown-elf/include/c++/5.2.0)
+set(GCC_8_1_0_DIR ${CMAKE_NBROOT}/gcc-m68k/m68k-unknown-elf/include/c++/8.1.0)
+
+if (EXISTS "${GCC_5_2_0_DIR}" AND IS_DIRECTORY "${GCC_5_2_0_DIR}")
+	set(CXX_NBINCLUDE
+		"${C_NBINCLUDE} -I${GCC_5_2_0_DIR}"
+	)
+endif()
+
+if (EXISTS "${GCC_8_1_0_DIR}" AND IS_DIRECTORY "${GCC_8_1_0_DIR}")
+	set(CXX_NBINCLUDE
+		"${C_NBINCLUDE} -I${GCC_8_1_0_DIR}"
+	)
+endif()
 
 set(C_FLAGS
 	"-${CPUFLAG} -gdwarf-2 -falign-functions=4 -ffunction-sections -fmessage-length=0 -fdata-sections -D$ENV{PLATFORM} -D${CPU_TYPE} -DNBMINGW ${C_NBINCLUDE}"
@@ -41,7 +52,7 @@ set(CXX_FLAGS
 )
 
 # CMake C++ flags
-set(CMAKE_CXX_FLAGS_DEBUG 
+set(CMAKE_CXX_FLAGS_DEBUG
 	"${CXX_FLAGS} \
 	-g \
 	-D_DEBUG \
@@ -59,7 +70,7 @@ set(CMAKE_CXX_FLAGS_RELWITHDEBINFO
 	"${CXX_FLAGS} \
 	-O2 \
 	-g \
-	-DNDEBUG \
+	-D_DEBUG \
 	${EXTRACXXFLAGS}"
 	CACHE STRING "C++ Release with Debug Info Flags"
 )
@@ -90,7 +101,7 @@ set(CMAKE_C_FLAGS_RELWITHDEBINFO
 	"${C_FLAGS} \
 	-O2 \
 	-g \
-	-DNDEBUG \
+	-D_DEBUG \
 	${EXTRACFLAGS}"
 	CACHE STRING "C Release with Debug Info Flags"
 )
@@ -102,7 +113,7 @@ set(CMAKE_C_FLAGS_MINSIZEREL
 	CACHE STRING "C Minimum Size Release Flags"
 )
 
-set(CMAKE_CXX_LINK_FLAGS 
+set(CMAKE_CXX_LINK_FLAGS
 	"-${CPUFLAG} -Wl,-n -T${CMAKE_NBROOT}/$ENV{PLATFORM}/lib/$ENV{PLATFORM}.ld \
 	-Wl,-R${CMAKE_NBROOT}/$ENV{PLATFORM}/lib/sys.ld \
 	${EXTRALINKFLAGS}"
